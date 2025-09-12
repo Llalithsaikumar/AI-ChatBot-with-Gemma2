@@ -52,7 +52,7 @@ AI-ChatBot/
 ├── app.py                    # Flask backend with RAG integration
 ├── requirements.txt          # Python dependencies
 ├── test_chatbot.py          # Test suite for chatbot functionality
-├── srec_qa.json              # Q&A dataset for RAG
+├── Campus_qa.json              # Q&A dataset for RAG
 ├── frontend/                 # Frontend assets
 │   ├── index.html           # Main UI template
 │   ├── app.js               # Frontend logic and API calls
@@ -82,18 +82,18 @@ Choose your platform:
 <details>
 <summary>🐧 Linux</summary>
 
-\`\`\`bash
+```bash
 curl -fsSL https://ollama.com/install.sh | sh
-\`\`\`
+```
 
 </details>
 
 <details>
 <summary>🍎 macOS</summary>
 
-\`\`\`bash
+```bash
 curl -fsSL https://ollama.com/install.sh | sh
-\`\`\`
+```
 
 </details>
 
