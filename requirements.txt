@@ -1,0 +1,19 @@
+# Enhanced RAG Chatbot Requirements
+
+# Core Flask and web framework
+flask==2.3.3
+flask-cors==4.0.0
+
+# Ollama client
+ollama==0.2.1
+
+# RAG and ML dependencies
+numpy==1.24.3
+faiss-cpu==1.7.4
+requests==2.31.0
+
+# Optional: For better JSON handling
+ujson==5.8.0
+
+# Development and debugging
+python-dotenv==1.0.0
