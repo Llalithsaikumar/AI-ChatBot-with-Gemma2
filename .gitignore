@@ -54,3 +54,7 @@ coverage/
 .cache/
 .next/
 out/
+
+
+
+srec_qa.json

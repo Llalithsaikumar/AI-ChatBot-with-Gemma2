@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Neural AI Logo](frontend/brain.png)
+
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
 [![Flask Version](https://img.shields.io/badge/flask-2.0%2B-green.svg)](https://flask.palletsprojects.com/)
@@ -164,7 +164,7 @@ pip install -r requirements.txt
 
 ### Adding Campus Knowledge
 ```json
-// srec_qa.json
+// campus_qa.json
 {
   "questions": [
     {
