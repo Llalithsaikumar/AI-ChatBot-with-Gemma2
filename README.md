@@ -1,4 +1,4 @@
-# AI Chatbot with Gemma2 and Local RAG
+# AI Chatbot with Gemma2 and Local RAG- **🤖 Dual-Mode Chat**: Switches between campus-specific and general knowledge
 
 <div align="center">
 
@@ -52,7 +52,7 @@ AI-ChatBot/
 ├── app.py                    # Flask backend with RAG integration
 ├── requirements.txt          # Python dependencies
 ├── test_chatbot.py          # Test suite for chatbot functionality
-├── srec_qa.json             # Q&A dataset for RAG
+├── srec_qa.json              # Q&A dataset for RAG
 ├── frontend/                 # Frontend assets
 │   ├── index.html           # Main UI template
 │   ├── app.js               # Frontend logic and API calls
@@ -99,40 +99,40 @@ curl -fsSL https://ollama.com/install.sh | sh
 
 ### Pull AI Models
 
-\`\`\`bash
+```bash
 # Pull required models
 ollama pull gemma2:2b
 ollama pull mxbai-embed-large
 
 # Verify installation
 ollama list
-\`\`\`
+```
 
 ### Install Python Dependencies
 
-\`\`\`bash
+```bash
 # Create virtual environment (recommended)
 python -m venv venv
 source venv/bin/activate  # Linux/macOS
-venv\\Scripts\\activate   # Windows
+venv\Scripts\activate   # Windows
 
 # Install dependencies
 pip install -r requirements.txt
-\`\`\`
+```
 
 ---
 
 ## 🚀 Running the App
 
 1. **Start Ollama Server**
-   \`\`\`bash
+   ```bash
    ollama serve
-   \`\`\`
+   ```
 
 2. **Launch Backend**
-   \`\`\`bash
+   ```bash
    python app.py
-   \`\`\`
+   ```
 
 3. **Access the UI**
    - Open [http://localhost:5000](http://localhost:5000)
@@ -163,8 +163,8 @@ pip install -r requirements.txt
 ## 🛠️ Customization
 
 ### Adding Campus Knowledge
-\`\`\`json
-// campus_qa.json
+```json
+// srec_qa.json
 {
   "questions": [
     {
@@ -173,34 +173,34 @@ pip install -r requirements.txt
     }
   ]
 }
-\`\`\`
+```
 
 ### Model Configuration
 - Swap models in \`app.py\`:
-\`\`\`python
+```python
 CHAT_MODEL = "gemma2:2b"  # Or any Ollama model
 EMBED_MODEL = "mxbai-embed-large"
-\`\`\`
+```
 
 ---
 
 ## 🧪 Testing
 
 Run the test suite:
-\`\`\`bash
+```bash
 python test_chatbot.py
-\`\`\`
+```
 
 API Testing:
-\`\`\`bash
+```bash
 # Health check
 curl http://localhost:5000/health
 
 # Chat endpoint
-curl -X POST http://localhost:5000/chat/simple \\
-     -H "Content-Type: application/json" \\
+curl -X POST http://localhost:5000/chat/simple \
+     -H "Content-Type: application/json" \
      -d '{"message": "What are the campus timings?"}'
-\`\`\`
+```
 
 ---
 
