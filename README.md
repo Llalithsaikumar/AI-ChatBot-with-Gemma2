@@ -35,26 +35,31 @@ A full-stack, Retrieval-Augmented Generation (RAG) powered chatbot application f
 
 ## ✨ Features
 
-- **🎯 Accurate Campus Answers**: Leverages custom Q&A file (`campus_qa.json`) using RAG
-- **🤖 General AI Chat**: Powered by Gemma2:2b for any topic
-- **🧠 Session-based Memory**: Context-aware responses during conversations
-- **⚡ Fast & Private**: No cloud dependencies, runs completely local
-- **🎨 Modern UI**: Clean, responsive frontend with real-time updates
+- **🎯 Accurate Campus Information**: Uses `srec_qa.json` with RAG for precise answers about your campus
+- **� Dual-Mode Chat**: Switches between campus-specific and general knowledge
+- **⚡ Local & Private**: Runs completely offline with Ollama models
+- **🎨 Modern Web Interface**: Clean design with real-time chat updates
+- **🔄 RAG Integration**: Smart context retrieval for accurate campus-related responses
+- **🛠️ Modular Architecture**: Easy to customize and extend with utils/ helpers
+- **🧪 Test Suite**: Includes test_chatbot.py for reliability
 
 ---
 
 ## 🏗️ Project Structure
 
 \`\`\`
-your-project/
-├── app.py                   # Flask backend (RAG + chat endpoints)
-├── campus_qa.json          # Campus Q&A dataset
-├── requirements.txt        # Python dependencies
-├── test_chatbot.py        # Unit tests
-└── Frontend/
-    ├── index.html         # Main UI
-    ├── app.js            # Frontend logic
-    └── style.css         # UI styling
+AI-ChatBot/
+├── app.py                    # Flask backend with RAG integration
+├── requirements.txt          # Python dependencies
+├── test_chatbot.py          # Test suite for chatbot functionality
+├── srec_qa.json             # Q&A dataset for RAG
+├── frontend/                 # Frontend assets
+│   ├── index.html           # Main UI template
+│   ├── app.js               # Frontend logic and API calls
+│   ├── style.css            # UI styling
+│   └── brain.png            # Logo asset
+└── utils/                   # Utility modules
+    └── time_helper.py       # Time-related utilities
 \`\`\`
 
 ---
