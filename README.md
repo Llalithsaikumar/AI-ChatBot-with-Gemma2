@@ -47,7 +47,7 @@ A full-stack, Retrieval-Augmented Generation (RAG) powered chatbot application f
 
 ## 🏗️ Project Structure
 
-\`\`\`
+```
 AI-ChatBot/
 ├── app.py                    # Flask backend with RAG integration
 ├── requirements.txt          # Python dependencies
@@ -60,7 +60,7 @@ AI-ChatBot/
 │   └── brain.png            # Logo asset
 └── utils/                   # Utility modules
     └── time_helper.py       # Time-related utilities
-\`\`\`
+```
 
 ---
 
