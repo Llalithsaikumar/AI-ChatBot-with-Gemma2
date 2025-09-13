@@ -229,7 +229,7 @@ Yes! Add Q&A pairs to campus_qa.json.
 
 We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
 
-1. Fork the repository
+1. Fork the repository 
 2. Create your feature branch
 3. Commit your changes
 4. Push to the branch
