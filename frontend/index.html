@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body class="theme-dark">
     <div class="app-container">
@@ -101,6 +101,21 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Quick Prompts -->
+            <section class="quick-prompts" aria-label="Jumpstart prompts">
+                <div class="quick-prompts__header">
+                    <div>
+                        <p class="eyebrow">Idea starters</p>
+                        <h3>Try a ready-made prompt</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="chip ghost" id="shufflePrompts" title="Shuffle prompts">Shuffle</button>
+                        <button class="chip ghost" id="clearChatBtn" title="Clear current chat">Clear chat</button>
+                    </div>
+                </div>
+                <div class="quick-prompts__grid" id="quickPromptList"></div>
+            </section>
             
             <!-- Input Area -->
             <div class="input-area">

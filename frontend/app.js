@@ -450,20 +450,20 @@ int main() {
     float A[10][10], B[10][10], C[10][10]; // Matrices for input and output
 
     printf("Enter the number of rows (M): ");
-    scanf("%d", &M);
+    scan("%d", &M);
     printf("Enter the number of columns (N): ");
     scanf("%d", &N);
     printf("Enter the number of columns (P): ");
     scanf("%d", &P);
 
-    printf("Enter elements of matrix A:\\n");
+    printf("Enter elements of matrix A:\n");
     for (int i = 0; i < M; ++i) {
         for (int j = 0; j < N; ++j) {
             scanf("%f", &A[i][j]);
         }
     }
 
-    printf("Enter elements of matrix B:\\n");
+    printf("Enter elements of matrix B:\n");
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < P; ++j) {
             scanf("%f", &B[i][j]);
@@ -471,7 +471,7 @@ int main() {
     }
 
     // Calculate the product matrix C using nested loops
-    printf("Resultant matrix:\\n");
+    printf("Resultant matrix:\n");
     for (int i = 0; i < M; ++i) {
         for (int j = 0; j < P; ++j) {
             C[i][j] = 0; // Initialize C to 0 for each element
@@ -481,13 +481,13 @@ int main() {
         }
     }
 
-    printf("\\n"); // Print a newline for spacing
+    printf("\n"); // Print a newline for spacing
 
     for (int i = 0; i < M; ++i) {
         for (int j = 0; j < P; ++j) {
             printf("%f ", C[i][j]); // Print the elements of matrix C
         }
-        printf("\\n");
+        printf("\n");
     }
 
     return 0;
@@ -659,7 +659,7 @@ int main() {
             <button class="copy-code-btn" data-code-id="${codeId}" title="Copy code">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2 2v1"></path>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
               </svg>
               Copy
             </button>
@@ -835,10 +835,10 @@ int main() {
   // Format links and emails
   formatLinks(content) {
     // Handle email links  
-    content = content.replace(/\[([^\]]+)\]\(mailto:([^)]+)\)/g, '<a href="mailto:$2" class="email-link">$1</a>');
+    content = content.replace(/\[([^\]]+)\]\(mailto:([^\)]+)\)/g, '<a href="mailto:$2" class="email-link">$1</a>');
     
     // Handle regular links
-    content = content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="response-link" target="_blank" rel="noopener">$1</a>');
+    content = content.replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" class="response-link" target="_blank" rel="noopener">$1</a>');
     
     // Handle plain email addresses
     content = content.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1" class="email-link">$1</a>');

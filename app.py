@@ -16,11 +16,11 @@ from utils.time_helper import get_ist_time, get_ist_date, get_ist_datetime
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='frontend', static_url_path='')
 CORS(app)  # Enable CORS for all routes
 
 # Configuration
-OLLAMA_MODEL = 'gemma2:2b'
+OLLAMA_MODEL = 'deepseek-r1:1.5b'
 OLLAMA_URL = "http://localhost:11434"
 EMBED_MODEL = "mxbai-embed-large"  # Using the available model
 MAX_TOKENS = 2048
@@ -230,8 +230,13 @@ Important guidelines:
 chatbot = ChatBot()
 
 @app.route('/', methods=['GET'])
-def health_check():
-    """Health check endpoint"""
+def root():
+    """Serve the frontend UI for browsers; JSON health for API clients."""
+    best = request.accept_mimetypes.best_match(['text/html', 'application/json'])
+
+    if best == 'text/html' and request.accept_mimetypes[best] > request.accept_mimetypes['application/json']:
+        return app.send_static_file('index.html')
+
     try:
         models = ollama.list()
         rag_status = "enabled" if chatbot.rag_system.store else "disabled"
@@ -438,6 +443,21 @@ def get_status():
 def api_health():
     """Simple health endpoint"""
     return jsonify({'status': 'ok', 'timestamp': time.time()})
+
+@app.route('/health', methods=['GET'])
+def ui_health():
+    """Explicit health endpoint returning JSON regardless of Accept header."""
+    try:
+        models = ollama.list()
+        return jsonify({
+            'status': 'healthy',
+            'model': OLLAMA_MODEL,
+            'embed_model': EMBED_MODEL,
+            'models_available': len(models.get('models', [])),
+            'message': 'Enhanced Chatbot API is running'
+        })
+    except Exception as e:
+        return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
 
 @app.errorhandler(404)
 def not_found(error):
