@@ -1,4 +1,4 @@
-# AI Chatbot with Gemma2 and Local RAG- **🤖 Dual-Mode Chat**: Switches between campus-specific and general knowledge
+# AI Chatbot with DeepSeek R1 and Local RAG- **🤖 Dual-Mode Chat**: Switches between campus-specific and general knowledge
 
 <div align="center">
 
@@ -11,7 +11,7 @@
 
 </div>
 
-A full-stack, Retrieval-Augmented Generation (RAG) powered chatbot application for campus information. This AI system answers campus-specific questions using a local Q&A dataset and the Gemma2:2b model via Ollama. It also works as a general-purpose chatbot for unrelated queries.
+A full-stack, Retrieval-Augmented Generation (RAG) powered chatbot application for campus information. This AI system answers campus-specific questions using a local Q&A dataset and the deepseek-r1:1.5b model via Ollama. It also works as a general-purpose chatbot for unrelated queries.
 
 ---
 
@@ -101,7 +101,7 @@ curl -fsSL https://ollama.com/install.sh | sh
 
 ```bash
 # Pull required models
-ollama pull gemma2:2b
+ollama pull deepseek-r1:1.5b
 ollama pull mxbai-embed-large
 
 # Verify installation
@@ -176,9 +176,9 @@ pip install -r requirements.txt
 ```
 
 ### Model Configuration
-- Swap models in \`app.py\`:
+- Swap models in `app.py`:
 ```python
-CHAT_MODEL = "gemma2:2b"  # Or any Ollama model
+CHAT_MODEL = "deepseek-r1:1.5b"  # Or any Ollama model
 EMBED_MODEL = "mxbai-embed-large"
 ```
 

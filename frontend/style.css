@@ -99,11 +99,21 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg-primary);
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.08), transparent 25%),
+              radial-gradient(circle at 85% 10%, rgba(59, 130, 246, 0.08), transparent 22%),
+              radial-gradient(circle at 50% 80%, rgba(244, 114, 182, 0.06), transparent 30%),
+              var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
   transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 /* App Layout */
@@ -379,6 +389,91 @@ body {
   overflow: hidden;
 }
 
+/* Quick Prompts */
+.quick-prompts {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.05));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  margin: 0 var(--space-lg) var(--space-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.quick-prompts__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.quick-prompts h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.quick-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-light);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-weight: 600;
+}
+
+.chip:hover {
+  border-color: var(--primary-blue);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.chip.ghost {
+  background: transparent;
+}
+
+.quick-prompts__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-sm);
+}
+
+.quick-card {
+  padding: var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quick-card:hover {
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.quick-card-title {
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.quick-card-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -425,6 +520,11 @@ body {
   gap: var(--space-sm);
   margin-bottom: var(--space-lg);
   animation: slideIn 0.3s ease-out;
+}
+
+.message-group.highlight {
+  box-shadow: 0 0 0 2px var(--primary-blue);
+  border-radius: var(--radius-lg);
 }
 
 @keyframes slideIn {
@@ -1149,43 +1249,52 @@ body {
 }
 
 .search-results {
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
+  display: grid;
+  gap: var(--space-sm);
 }
 
 .search-result {
   padding: var(--space-md);
-  border-bottom: 1px solid var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-fast);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-sm);
 }
 
 .search-result:hover {
   background: var(--bg-hover);
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
-.search-result:last-child {
-  border-bottom: none;
-}
-
-.search-result-title {
+.search-result .result-title {
   font-weight: 600;
-  color: var(--text-primary);
   margin-bottom: var(--space-xs);
 }
 
-.search-result-content {
+.search-result .result-snippet {
   color: var(--text-secondary);
-  font-size: 0.875rem;
-  line-height: 1.4;
+  font-size: 0.9rem;
+  margin-bottom: var(--space-xs);
 }
 
-.search-highlight {
-  background: rgba(59, 130, 246, 0.2);
-  color: var(--primary-blue);
-  padding: 0.125rem 0.25rem;
+.search-result .result-meta {
+  display: flex;
+  gap: var(--space-sm);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+mark {
+  background: rgba(59, 130, 246, 0.25);
+  color: var(--text-primary);
+  padding: 0.05rem 0.2rem;
   border-radius: var(--radius-sm);
-  font-weight: 500;
 }
 
 /* Toast Notifications */
