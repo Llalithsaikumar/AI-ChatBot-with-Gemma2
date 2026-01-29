@@ -356,12 +356,8 @@ class EnhancedChatbot {
         this.updateSessionTitle(this.state.currentSessionId, title);
       }
 
-      // Check connection before attempting to send
-      const isConnected = this.state.isConnected || await this.checkConnection();
-      if (!isConnected) {
-        this.showOfflineMessage();
-        return;
-      }
+      // Probe connection, but do not block sending; backend will fall back to RAG/offline
+      this.checkConnection().catch(() => {});
 
       // Send to API
       if (this.settings.streaming) {
