@@ -10,6 +10,7 @@ import numpy as np
 import faiss
 import os
 import re
+import difflib
 from utils.time_helper import get_ist_time, get_ist_date, get_ist_datetime
 
 # Configure logging
@@ -30,6 +31,7 @@ TOP_K = 3
 class RAGSystem:
     def __init__(self):
         self.store = None
+        self.qa_data = []  # raw QA list for local fallback without embeddings
         self.srec_keywords = [
             'srec', 'sree rama', 'rama engineering', 'college', 'tirupathi',
             'engineering', 'jntua', 'rami reddy', 'principal', 'department',
@@ -47,9 +49,14 @@ class RAGSystem:
                 with open('srec_qa.json', 'r', encoding='utf-8') as f:
                     qa_data = json.load(f)
 
+                self.qa_data = qa_data
                 logger.info(f"Loaded {len(qa_data)} SREC Q&A entries")
-                self.store = self.ingest_and_index(qa_data)
-                logger.info("SREC RAG system initialized successfully")
+                try:
+                    self.store = self.ingest_and_index(qa_data)
+                    logger.info("SREC RAG system initialized successfully")
+                except Exception as embed_err:
+                    logger.error(f"Embedding/indexing failed, falling back to keyword search only: {embed_err}")
+                    self.store = None
             else:
                 logger.warning("srec_qa.json not found. RAG system disabled.")
 
@@ -119,6 +126,37 @@ class RAGSystem:
             "metas": metas
         }
 
+    def local_search(self, query, top_k=1):
+        """Lightweight keyword/ratio search over raw QA when embeddings are unavailable."""
+        if not self.qa_data:
+            return None
+
+        query_lower = query.lower()
+        best = []
+        for item in self.qa_data:
+            q_text = item.get('question', '')
+            a_text = item.get('answer', '')
+            q_lower = q_text.lower()
+
+            # simple overlap score: common words count + substring bonus
+            words_q = set(re.findall(r"\w+", q_lower))
+            words_query = set(re.findall(r"\w+", query_lower))
+            overlap = len(words_q & words_query)
+            substring_bonus = 2 if query_lower in q_lower or q_lower in query_lower else 0
+
+            # ratio using SequenceMatcher
+            ratio = difflib.SequenceMatcher(None, query_lower, q_lower).ratio()
+            score = overlap * 2 + substring_bonus + ratio
+
+            best.append((score, q_text, a_text))
+
+        best.sort(reverse=True, key=lambda x: x[0])
+        top = best[:top_k]
+        if not top or top[0][0] == 0:
+            return None
+
+        return [{"question": q, "answer": a, "score": float(score)} for score, q, a in top]
+
     def is_srec_question(self, query):
         """Check if query is about SREC"""
         query_lower = query.lower()
@@ -168,6 +206,30 @@ class ChatBot:
         self.conversation_history = []
         self.max_history = 10
         self.rag_system = RAGSystem()
+
+    def rag_fallback_response(self, user_message):
+        """Return a non-LLM response using only RAG data, or None if unavailable."""
+        # Preferred: embedding-backed RAG if available
+        if self.rag_system.store:
+            rag_result = self.rag_system.query_rag(user_message)
+            if rag_result and rag_result.get("context"):
+                context = rag_result["context"]
+                return (
+                    "The primary model is offline. Here's what I can share from the SREC knowledge base:\n\n"
+                    f"{context}\n\n"
+                    "If you need more details, start the model server to enable full answers."
+                )
+
+        # Fallback: lightweight keyword/ratio search over raw QA
+        local_hits = self.rag_system.local_search(user_message, top_k=1)
+        if local_hits:
+            top = local_hits[0]
+            return (
+                "The primary model is offline. I matched this from the SREC knowledge base:\n\n"
+                f"Q: {top['question']}\nA: {top['answer']}\n"
+            )
+
+        return None
 
     def add_to_history(self, role, content):
         """Add message to conversation history"""
@@ -309,12 +371,24 @@ def chat():
                 logger.info(f"Response completed. Length: {len(response_content)}")
 
             except Exception as e:
-                logger.error(f"Error generating response: {str(e)}")
-                error_response = {
-                    'error': 'Sorry, I encountered an error while generating the response. Please try again.',
-                    'done': True
+                logger.error(f"Error generating response, attempting RAG fallback: {str(e)}")
+
+                # Try RAG-only fallback
+                rag_reply = chatbot.rag_fallback_response(user_message)
+                if rag_reply:
+                    chatbot.add_to_history('user', user_message)
+                    chatbot.add_to_history('assistant', rag_reply)
+                    yield f"data: {json.dumps({'content': rag_reply, 'done': False})}\n\n"
+                    yield f"data: {json.dumps({'content': '', 'done': True})}\n\n"
+                    return
+
+                # If no RAG, signal offline
+                offline_response = {
+                    'error': 'The assistant is offline. Start the model server or load RAG data.',
+                    'done': True,
+                    'offline': True
                 }
-                yield f"data: {json.dumps(error_response)}\n\n"
+                yield f"data: {json.dumps(offline_response)}\n\n"
 
         return Response(
             stream_with_context(generate_response()),
@@ -344,20 +418,33 @@ def chat_simple():
         # Get conversation context (includes RAG context if applicable)
         messages = chatbot.get_context_messages(user_message)
 
-        # Get complete response
-        response = ollama.chat(
-            model=OLLAMA_MODEL,
-            messages=messages,
-            stream=False,
-            options={
-                'temperature': TEMPERATURE,
-                'top_p': 0.9,
-                'num_ctx': MAX_TOKENS,
-                'repeat_penalty': 1.1
-            }
-        )
+        response_content = None
 
-        response_content = response['message']['content']
+        try:
+            # Preferred: LLM response
+            response = ollama.chat(
+                model=OLLAMA_MODEL,
+                messages=messages,
+                stream=False,
+                options={
+                    'temperature': TEMPERATURE,
+                    'top_p': 0.9,
+                    'num_ctx': MAX_TOKENS,
+                    'repeat_penalty': 1.1
+                }
+            )
+            response_content = response['message']['content']
+        except Exception as llm_error:
+            logger.error(f"LLM unavailable, trying RAG fallback: {llm_error}")
+            rag_reply = chatbot.rag_fallback_response(user_message)
+            if rag_reply:
+                response_content = rag_reply
+            else:
+                return jsonify({
+                    'error': 'The assistant is offline. Start the model server or load RAG data.',
+                    'success': False,
+                    'offline': True
+                }), 503
 
         # Add to conversation history
         chatbot.add_to_history('user', user_message)
