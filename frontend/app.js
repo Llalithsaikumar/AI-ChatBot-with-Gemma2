@@ -356,6 +356,13 @@ class EnhancedChatbot {
         this.updateSessionTitle(this.state.currentSessionId, title);
       }
 
+      // Check connection before attempting to send
+      const isConnected = this.state.isConnected || await this.checkConnection();
+      if (!isConnected) {
+        this.showOfflineMessage();
+        return;
+      }
+
       // Send to API
       if (this.settings.streaming) {
         await this.sendStreamingMessage(message);
@@ -370,6 +377,13 @@ class EnhancedChatbot {
     }
   }
 
+  showOfflineMessage() {
+    const offlineMessage = 'The bot is offline right now. Start the model server and try again.';
+    this.addMessageToUI('bot', offlineMessage);
+    this.addMessageToSession('bot', offlineMessage);
+    this.showToast('Offline', offlineMessage, 'error');
+  }
+
   async sendStreamingMessage(message) {
     this.showTypingIndicator();
     
@@ -381,7 +395,10 @@ class EnhancedChatbot {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        this.setConnectionState('error', 'Offline');
+        this.hideTypingIndicator();
+        this.showOfflineMessage();
+        return;
       }
 
       const reader = response.body.getReader();
@@ -423,11 +440,11 @@ class EnhancedChatbot {
         }
       }
     } catch (error) {
+      console.error('Streaming send failed:', error);
+      this.setConnectionState('error', 'Offline');
       this.hideTypingIndicator();
       if (messageElement) messageElement.remove();
-      
-      // Fallback to simple response for demo
-      this.sendSimpleMessage(message);
+      this.showOfflineMessage();
     }
   }
 
@@ -1304,15 +1321,40 @@ int main() {
     localStorage.setItem('neuralai_sessions', JSON.stringify(sessionsData));
   }
 
-  checkConnection() {
-    // Set connection status
-    this.state.isConnected = true;
-    
+  setConnectionState(state, message = '') {
+    this.state.isConnected = state === 'connected';
+
     if (this.statusDot) {
       this.statusDot.className = 'status-dot';
+      if (state === 'connecting') this.statusDot.classList.add('connecting');
+      if (state === 'error') this.statusDot.classList.add('error');
     }
+
     if (this.statusText) {
-      this.statusText.textContent = 'Connected';
+      if (state === 'connected') {
+        this.statusText.textContent = 'Connected';
+      } else if (state === 'connecting') {
+        this.statusText.textContent = 'Connecting...';
+      } else {
+        this.statusText.textContent = message || 'Offline';
+      }
+    }
+  }
+
+  async checkConnection() {
+    this.setConnectionState('connecting');
+
+    try {
+      const response = await fetch(`${this.apiConfig.baseUrl}${this.apiConfig.endpoints.status}`);
+      const data = await response.json();
+
+      const isConnected = response.ok && data.status !== 'error' && data.connected !== false;
+      this.setConnectionState(isConnected ? 'connected' : 'error', isConnected ? '' : 'Offline');
+      return isConnected;
+    } catch (error) {
+      console.error('Status check failed:', error);
+      this.setConnectionState('error', 'Offline');
+      return false;
     }
   }
 
